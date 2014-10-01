@@ -46,7 +46,10 @@ commitObjects = (io) ->
   
 
 logger = (typ, msg, io) ->
-  io.emit 'log', typ, "[#{cfg.name}] #{msg}" if io
+  try 
+    io.emit 'log', typ, "[#{cfg.name}] #{msg}" if io
+  catch error
+    console.log error
   console.log msg
 
 
