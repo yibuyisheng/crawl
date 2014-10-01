@@ -37,7 +37,7 @@ commitObjects = (io) ->
     logger 'info', body, io
     
     if err
-      return logger 'error', 'commit failed!', err, body
+      return logger 'error', 'commit failed!', err, body, origin
 
     stackObjects = []
 
