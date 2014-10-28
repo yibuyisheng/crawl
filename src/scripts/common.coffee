@@ -19,27 +19,32 @@ worker = (domain, url, urlConfig, crawlResult) ->
         return false if not params.crawlComplete
       true
 
-    for params, i in urlConfig.paramsList
-      # 每个请求之间间隔时间是urlConfig.delay ms
-      ((params, i) ->
-        setTimeout ->
 
-          parser.download url, params
-          .then (data) ->
-            if not data.error and data.response.statusCode is 200
-              params.crawlComplete = 
-                statusCode: 200
-              crawlData.push data.body
-            else
-              params.crawlComplete = 
-                statusCode data.response.statusCode
+    i = 0
+    timer = setInterval ->
+      if i >= urlConfig.paramsList.length - 1
+        clearInterval timer
 
-            if check urlConfig.paramsList
-              console.log '======================crawlData:', crawlData.length
-              crawlResult null, domain, url, parser.parse(url, crawlData)
+      params = urlConfig.paramsList[i]
+      parser.download url, params
+      .then (data) ->
+        try
+          if not data.error and data.response.statusCode is 200
+            params.crawlComplete = 
+              statusCode: 200
+            crawlData.push data.body
+          else
+            params.crawlComplete = 
+              statusCode data.response.statusCode
 
-        , urlConfig.delay * i
-      )(params, i)
+          if check urlConfig.paramsList
+            # console.log '======================crawlData:', crawlData.length
+            crawlResult null, domain, url, parser.parse(url, crawlData)
+        catch e
+          console.log e
+
+        i += 1
+    , urlConfig.delay
   else
     parser.download(url).then((content) ->
       try
@@ -119,3 +124,8 @@ isMobile = (src) ->
 # 替换掉类似于&nbsp;等特殊字符，防止存到数据库中的字符串乱码
 escapeCharacters = (src) ->
   String(src).replace /(&[a-z|A-Z];)|(\n)|(\r)|(\t)/g, ''
+
+
+
+
+
