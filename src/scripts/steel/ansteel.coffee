@@ -4,7 +4,7 @@
 
   # 构造paramsList
   paramsList = []
-  for index in [0..1083] by 1
+  for index in [0..1488] by 1
     paramsList.push
       'i0-0-prodtypedesc': ''
       'i0-0-spec': ''
@@ -18,7 +18,7 @@
     "http://www.ansteel.net.cn/spot/DispatchAction.do?efFormEname=BP004_2&methodName=AnnounceList_xhzy&serviceName=BP01":
       priority: 1
       # validity: 3 * 60 * 1000
-      validity: 5 * 1000
+      validity: 5 * 60 * 1000
       delay: 1000
       paramsList: paramsList
       # 爬取时间为每天早上9点到晚上9点
@@ -48,7 +48,8 @@
             spec: $tr.find('td:nth-child(2)').text()
             shop_sign: $tr.find('td:nth-child(3)').text()
             weight: $tr.find('td:nth-child(4)').text()
-            manufacturer: $tr.find('td:nth-child(5)').text()
+            # manufacturer: $tr.find('td:nth-child(5)').text()
+            manufacturer: '鞍钢'
             provider_name: ''
             price: -1
             pieces: -1

@@ -1,17 +1,17 @@
 cfg = 
-  host: '10.57.96.221'
+  host: '218.244.158.92'
   port: 26123
   immediate: process.argv.length > 2
-  'script patterns': [
-    'scripts/common.js'
-    'scripts/steel/common/*.js'
-    'scripts/steel/*.js'
-  ]
   # 'script patterns': [
   #   'scripts/common.js'
   #   'scripts/steel/common/*.js'
-  #   'scripts/steel/zy-zhaogang.js'
+  #   'scripts/steel/*.js'
   # ]
+  'script patterns': [
+    'scripts/common.js'
+    'scripts/steel/common/*.js'
+    'scripts/steel/mysteel.js'
+  ]
 
 io = require('socket.io-client').connect "http://#{cfg.host}:#{cfg.port}/admin", cfg
 rl = require('readline').createInterface

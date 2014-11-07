@@ -29,6 +29,7 @@ worker = (domain, url, urlConfig, crawlResult) ->
       parser.download url, params
       .then (data) ->
         try
+          crawlData = []
           if not data.error and data.response.statusCode is 200
             params.crawlComplete = 
               statusCode: 200
@@ -37,13 +38,14 @@ worker = (domain, url, urlConfig, crawlResult) ->
             params.crawlComplete = 
               statusCode data.response.statusCode
 
-          if check urlConfig.paramsList
+          # if check urlConfig.paramsList
             # console.log '======================crawlData:', crawlData.length
-            crawlResult null, domain, url, parser.parse(url, crawlData)
+            # crawlResult null, domain, url, parser.parse(url, crawlData)
+          crawlResult null, domain, url, parser.parse(url, crawlData)
         catch e
           console.log e
 
-        i += 1
+      i += 1
     , urlConfig.delay
   else
     parser.download(url).then((content) ->
@@ -124,6 +126,7 @@ isMobile = (src) ->
 # 替换掉类似于&nbsp;等特殊字符，防止存到数据库中的字符串乱码
 escapeCharacters = (src) ->
   String(src).replace /(&[a-z|A-Z];)|(\n)|(\r)|(\t)/g, ''
+
 
 
 

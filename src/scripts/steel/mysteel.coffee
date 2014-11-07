@@ -3,55 +3,78 @@
   $ = require("jQuery")
 
   configs = {}
-  i = 1
+  for index in [0..2] by 1
+    configs['http://baoge.mysteel.com.cn/resource/index.html?cn=&bn=&sp=&ma=&ct=&fa=&wh=&md=622003&status=1&count=30&pg=' + (index + 1)] =
+      priority: 1
+      validity: 1 * 1000
 
-  configs['http://list.sososteel.com/res/topByMemberIds.html?mds=285978;15697;1069;1490297&nums=1;1;1;179&v=2014681041'] =
+  for index in [0..2] by 1
+    configs['http://shyhsy.mysteel.com.cn/resource/index.html?cn=&bn=&sp=&ma=&ct=&fa=&wh=&md=2048023&status=1&count=20&pg=' + (index + 1)] =
+      priority: 1
+      validity: 1 * 1000
+
+  for index in [0..7] by 1
+    configs['http://baoze.mysteel.com.cn/resource/index.html?cn=&bn=&sp=&ma=&ct=&fa=&wh=&md=2048023&status=1&count=20&pg=' + (index + 1)] =
+      priority: 1
+      validity: 1 * 1000
+
+  for index in [0..1] by 1
+    configs['http://yuyan.mysteel.com.cn/resource/index.html?cn=&bn=&sp=&ma=&ct=&fa=&wh=&md=2048023&status=1&count=20&pg=' + (index + 1)] =
+      priority: 1
+      validity: 1 * 1000
+
+  configs['http://baoshunchang.mysteel.com.cn/resource.html'] =
     priority: 1
-    # validity: 3 * 60 * 1000
-    validity: 5 * 1000
-  configs['http://list.sososteel.com/res/banksteel.html?kw=&ct=&cy=&ml=&sp=&fa=&wh=&pr1=&pr2=&ts1=&ts2=&wi1=&wi2=&sort='] =
-    priority: 2
-    # validity: 3 * 60 * 1000
-    validity: 5 * 1000
+    validity: 1 * 1000
+
+  for index in [0..2] by 1
+    configs['http://shhanyuhe.mysteel.com.cn/resource/index.html?cn=&bn=&sp=&ma=&ct=&fa=&wh=&md=736398&status=1&count=20&pg=' + (index + 1)] =
+      priority: 1
+      validity: 1 * 1000
+
+  for index in [0..12] by 1
+    configs['http://yuande.mysteel.com.cn/resource/index.html?cn=&bn=&sp=&ma=&ct=&fa=&wh=&md=921252&status=1&count=30&pg=' + (index + 1)] =
+      priority: 1
+      validity: 1 * 1000
+
 
   urlConfigs["mysteel"] = configs
+
   parser =
-    download: (url) ->
-      deferred = Q.defer()
-      request 
-        url: url
-        encoding: null
-        headers: 
-          Referer: 'http://list.sososteel.com/res/p--------------------------------1.html'
-      , (error, response, body) ->
-        deferred.resolve iconv.decode(body, "GBK")
-
-      deferred.promise
-
+    download: gbkGet
     parse: (url, content) ->
-      datas = JSON.parse content
-
-      now = new Date()
       result = []
-      for data in datas
-        result.push
-          from_site: 'http://list.sososteel.com'
-          crawl_time: "#{now.getFullYear()}-#{now.getMonth() + 1}-#{now.getDate()} #{now.getHours()}:#{now.getMinutes()}:#{now.getSeconds()}"
-          product_name: data.sBreedName
-          spec: data.sSpecification
-          shop_sign: data.sMaterial
-          weight: data.sQuantity
-          manufacturer: data.sFactory
-          provider_name: data.sMemberName
-          price: data.sPrice
-          pieces: -1
-          contact: ''
-          region_name: data.sCityName
-          warehouse_name: data.sWarehouse
-          contact_mobile: data.sMobile
-          contact_name: data.sContactorName
-          contact_phone: data.sPhone
-          contact_address: ''
+
+      $trs = $(content).find('tr[onmouseover]')
+      len = $trs.length
+      for index in [0..(len-1)] by 1
+        try
+          $tr = $trs.eq index
+          now = new Date()
+
+          price = $tr.find('td:nth-child(4)').text()
+          weight = $tr.find('td:nth-child(5)').text()
+          result.push
+            from_site: url.match(/^http:\/\/.+\//)[0]
+            crawl_time: "#{now.getFullYear()}-#{now.getMonth() + 1}-#{now.getDate()} #{now.getHours()}:#{now.getMinutes()}:#{now.getSeconds()}"
+            product_name: $tr.find('td:nth-child(1) a').text()
+            spec: $tr.find('td:nth-child(3)').text()
+            shop_sign: $tr.find('td:nth-child(2)').text()
+            weight: if parseFloat(weight) then parseFloat(weight) else -1
+            manufacturer: $tr.find('td:nth-child(6)').text()
+            provider_name: ''
+            price: if parseFloat(price) then parseFloat(price) else -1
+            pieces: -1
+            contact: ''
+            region_name: $tr.find('td:nth-child(7)').text()
+            warehouse_name: $tr.find('td:nth-child(8)').text()
+            contact_mobile: ''
+            contact_name: $tr.find('td:nth-child(10)').text()
+            contact_phone: $tr.find('td:nth-child(11)').text()
+            contact_address: ''
+
+        catch e
+          console.log e
 
       result
 
